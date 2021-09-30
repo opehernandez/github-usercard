@@ -1,8 +1,11 @@
+const { default: axios } = require("axios");
+
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
+
 
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
@@ -28,7 +31,7 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -49,12 +52,45 @@ const followersArray = [];
       </div>
     </div>
 */
+function createGitCard (data) {
+  let outterDiv = document.createElement('div')
+  outterDiv.classList.add('card')
+  let img = document.createElement('img')
+  img.src = data.avatar_url
+  let innerDiv = document.createElement('div')
+  innerDiv.classList.add('card-info')
+  let h3 = document.createElement('h3')
+  h3.classList.add('name')
+  h3.textContent = data.name
+  let userP = document.createElement('p')
+  userP.classList.add('username')
+  userP.textContent = data.login
+  let locP = document.createElement('p')
+  data.location ? locP.textContent = `Location: ${data.location}` : locP.textContent = 'Location: UNKNOWN'
+  let profileP = document.createElement('p')
+  profileP.textContent = `Profile: `
+  let link = document.createElement('a')
+  link.textContent = data.html_url
+  link.href = data.html_url
+  let followersP = document.createElement('p')
+  followersP.textContent = `Followers: ${data.followers}`
+  let followingP = document.createElement('p')
+  followingP.textContent = `Following: ${data.following}`
+  let bioP = document.createElement('p')
+  data.bio ? bioP.textContent = `Bio: ${data.bio}` : bioP.textContent = `Bio: The user has no Bio`
+  profileP.appendChild(link)
+  innerDiv.append(h3, userP, locP, profileP, followersP, followingP, bioP )
+  outterDiv.append(img, innerDiv)
+  return outterDiv
+}
 
-/*
-  List of LS Instructors Github username's:
-    tetondan
-    dustinmyers
-    justsml
-    luishrd
-    bigknell
-*/
+const followersArray = ['tetondan', 'dustinmyers', 'justsml', 'luishrd', 'bigknell', 'VABIII', 'opehernandez'];
+
+let cont = document.querySelector('.cards')
+followersArray.forEach(item => {
+  axios.get(`https://api.github.com/users/${item}`)
+  .then( resp => {
+  let info = resp.data
+  cont.appendChild(createGitCard(info))
+  })
+})
